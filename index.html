@@ -6,6 +6,13 @@
 <script src="./support.js"></script>
 </head>
 <body>
+<template id="__bundler_thumbnail">
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100" height="100" fill="#f2e8d8"/>
+  <rect x="30" y="30" width="26" height="26" fill="#c1442a"/>
+  <rect x="38" y="38" width="26" height="26" fill="#e9a53f"/>
+</svg>
+</template>
 <x-dc>
 <helmet>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -542,8 +549,8 @@ class Component extends DCLogic {
   // │  Leave them empty to keep the app fully local (no login).       │
   // │  Get them at: supabase.com → your project → Settings → API      │
   // └──────────────────────────────────────────────────────────────┘
-  SUPABASE_URL = 'https://iauexlkubaabulznqbng.supabase.co';          // e.g. 'https://abcd1234.supabase.co'
-  SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlhdWV4bGt1YmFhYnVsem5xYm5nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI5OTk2OTAsImV4cCI6MjA5ODU3NTY5MH0.9AMnXU3BxbuPNil_wHlpU6FDwJLE2IAseQIkGnkUnTI';     // the long "anon public" key
+  SUPABASE_URL = '';          // e.g. 'https://abcd1234.supabase.co'
+  SUPABASE_ANON_KEY = '';     // the long "anon public" key
 
   state = {
     screen: 'landing', wiping: false, view: 'timeline',

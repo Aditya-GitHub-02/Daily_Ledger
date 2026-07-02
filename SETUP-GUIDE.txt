@@ -1,0 +1,102 @@
+# The Daily Ledger — Login + Cloud Sync + Mobile App Setup
+
+Your app already works with NO setup (entries save per-device). Follow this
+ONLY when you want real accounts + entries that sync across every device.
+
+Everything here is FREE.
+
+═══════════════════════════════════════════════════════════════
+PART 1 — TURN ON LOGIN & SYNC (Supabase, free)
+═══════════════════════════════════════════════════════════════
+
+STEP 1 — Make a free Supabase project
+  1. Go to supabase.com → "Start your project" → sign in with GitHub.
+  2. Click "New project". Give it a name (e.g. daily-ledger),
+     set a database password (save it somewhere), pick the free plan.
+  3. Wait ~2 minutes for it to finish setting up.
+
+STEP 2 — Create the table (copy-paste, no coding)
+  1. In your Supabase project, click "SQL Editor" in the left sidebar.
+  2. Click "New query", paste ALL of this, then click "Run":
+
+      create table if not exists ledgers (
+        user_id uuid primary key references auth.users(id) on delete cascade,
+        entries jsonb default '[]'::jsonb,
+        updated_at timestamptz default now()
+      );
+      alter table ledgers enable row level security;
+      create policy "own ledger read"  on ledgers for select using (auth.uid() = user_id);
+      create policy "own ledger write" on ledgers for insert with check (auth.uid() = user_id);
+      create policy "own ledger update" on ledgers for update using (auth.uid() = user_id);
+
+  You should see "Success. No rows returned." That's correct.
+
+STEP 3 — Make login instant (skip email confirmation)
+  1. Left sidebar → "Authentication" → "Providers" (or "Sign In / Providers").
+  2. Open "Email". Turn OFF "Confirm email". Save.
+     (This lets people log in right after signing up. You can turn it
+      back on later if you want email verification.)
+
+STEP 4 — Get your two keys
+  1. Left sidebar → "Project Settings" (gear) → "API".
+  2. Copy the "Project URL"  (looks like https://abcd1234.supabase.co)
+  3. Copy the "anon public" key (a long string).
+
+STEP 5 — Paste the keys into the app
+  1. Open index.html in any text editor (Notepad, VS Code, etc.).
+  2. Near the top of the <script> logic, find these two lines:
+
+        SUPABASE_URL = '';
+        SUPABASE_ANON_KEY = '';
+
+  3. Paste your values between the quotes:
+
+        SUPABASE_URL = 'https://abcd1234.supabase.co';
+        SUPABASE_ANON_KEY = 'your-long-anon-key-here';
+
+  4. Save the file.
+
+That's it — the login screen now appears when someone taps "ENTER THE
+LEDGER", and each account's entries sync to every device they log in on.
+(Leave the keys empty to go back to local-only, no-login mode.)
+
+═══════════════════════════════════════════════════════════════
+PART 2 — PUT IT ONLINE (free link, works on every device)
+═══════════════════════════════════════════════════════════════
+
+Upload the WHOLE contents of this "deploy" folder together — all the
+files must sit side by side (index.html, support.js, manifest.webmanifest,
+sw.js, icon-192.png, icon-512.png).
+
+Easiest — Netlify Drop (no account needed):
+  1. Go to app.netlify.com/drop
+  2. Drag the whole "deploy" FOLDER onto the page.
+  3. You get a link like https://something.netlify.app — share it.
+
+Or GitHub Pages (in your repo):
+  1. In your Daily_Ledger repo → "Add file" → "Upload files".
+  2. Drag in ALL the files from this folder. Commit.
+  3. Settings → Pages → Deploy from branch → main / root → Save.
+  4. Your link: https://aditya-github-02.github.io/Daily_Ledger/
+
+IMPORTANT: The site must be opened over https:// (Netlify and GitHub
+Pages both are) for login and "install to home screen" to work.
+
+═══════════════════════════════════════════════════════════════
+PART 3 — INSTALL IT LIKE AN APP (no app store, free)
+═══════════════════════════════════════════════════════════════
+
+Once it's online, anyone can add it to their phone's home screen:
+
+  iPhone/iPad (Safari): open the link → Share button → "Add to Home Screen".
+  Android (Chrome): open the link → menu (⋮) → "Install app" / "Add to Home screen".
+
+It then gets its own icon and opens full-screen like a real app.
+
+═══════════════════════════════════════════════════════════════
+LATER — REAL APP STORE APPS (optional, costs money)
+═══════════════════════════════════════════════════════════════
+
+To publish to Google Play (~$25 once) and Apple App Store (~$99/year),
+this same web app can be wrapped with a tool called Capacitor. Ask me
+when you're ready and I'll walk you through it.
